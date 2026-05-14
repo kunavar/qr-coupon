@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <title>QR skener</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- QR library -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system;
+      padding: 16px;
+      text-align: center;
+    }
+
+    #reader {
+      width: 100%;
+      max-width: 360px;
+      margin: 16px auto;
+      display: none;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 12px 20px;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h2>QR skeniranje</h2>
+
+<button id="startBtn">Začni skeniranje</button>
+
+<div id="reader"></div>
+<div id="result"></div>
+
+<script>
+  // 🔴 ZAMENJAJ S SVOJIMI PODATKI
+  const SUPABASE_URL = "https://hgqsqdwlqfkqkdiznalx.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncXNxZHdscWZrcWtkaXpuYWx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3ODMxMzAsImV4cCI6MjA5NDM1OTEzMH0.O3vCCDnN51IUR4P2zKhwg9-IFFGpVPfNuBLT8V-4K_Q";
+
+  const startBtn = document.getElementById("startBtn");
+  const readerDiv = document.getElementById("reader");
+  const resultEl = document.getElementById("result");
+
+  const qr = new Html5Qrcode("reader");
+  let isScanning = false;
+
+  async function onScanSuccess(code) {
+    if (isScanning) return;
+    isScanning = true;
+
+    try {
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/qr_codes`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_KEY,
+            "Authorization": `Bearer ${SUPABASE_KEY}`,
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({ code })
+        }
+      );
+
+      if (response.ok) {
+        resultEl.innerText = "✅ Koda uspešno zabeležena";
+        resultEl.style.color = "green";
+      } else {
+        const err = await response.json();
+        if (err.code === "23505") {
+          resultEl.innerText = "❌ Žal, koda je že koriščena";
+          resultEl.style.color = "red";
+        } else {
+          resultEl.innerText = "Napaka: " + JSON.stringify(err);
+          resultEl.style.color = "black";
+        }
+      }
+    } catch (e) {
+      resultEl.innerText = "Napaka pri pošiljanju";
+      resultEl.style.color = "black";
+    }
+
+    await qr.stop();
+
+    // ponovni scan po 2 sek
+    setTimeout(() => {
+      resultEl.innerText = "";
+      isScanning = false;
+      qr.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        onScanSuccess
+      );
+    }, 2000);
+  }
+
+  startBtn.onclick = async () => {
+    startBtn.style.display = "none";
+    readerDiv.style.display = "block";
+
+    await qr.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      onScanSuccess
+    );
+  };
+</script>
+
+</body>
+</html>
