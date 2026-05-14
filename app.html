@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 
-  <!-- NO CACHE (GitHub Pages + Safari fix) -->
+  <!-- NO CACHE -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -11,137 +11,79 @@
   <title>MAGAteambuilding kuponi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  https://unpkg.com/html5-qrcode/script.js
+  <!-- ✅ PRAVILNO VKLJUČEN SCRIPT -->
+  <script src="https://unpkg.com/html5-qrcode/script.js"></script>
 
   <style>
     body {
-      background: #fda75c;
-      font-family: system-ui, -apple-system;
-      padding: 24px;
-      margin: 0;
+      background:#fda75c;
+      font-family:system-ui,-apple-system;
+      padding:24px;
+      margin:0;
     }
-
     .window {
-      max-width: 360px;
-      margin: 0 auto;
-      background: #fde5c9;
-      border: 2px solid #111;
-      border-radius: 6px;
+      max-width:360px;
+      margin:0 auto;
+      background:#fde5c9;
+      border:2px solid #111;
+      border-radius:6px;
     }
-
     .titlebar {
-      background: #f4763b;
-      padding: 6px 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 2px solid #111;
+      background:#f4763b;
+      padding:6px 8px;
+      display:flex;
+      justify-content:space-between;
+      border-bottom:2px solid #111;
+      font-size:14px;
+      font-weight:600;
     }
-
-    .title {
-      font-weight: 600;
-      font-size: 14px;
-    }
-
     .buttons span {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border: 1px solid #111;
-      margin-left: 4px;
-      border-radius: 50%;
-      background: #fde5c9;
+      width:12px;height:12px;border:1px solid #111;
+      border-radius:50%;display:inline-block;margin-left:4px;
+      background:#fde5c9;
     }
-
-    .content {
-      padding: 20px;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 18px;
-      margin: 0 0 16px;
-    }
-
-    #reader {
-      display: none;
-      margin-top: 14px;
-    }
+    .content { padding:20px;text-align:center; }
+    h1 { font-size:18px;margin:0 0 16px; }
 
     button {
-      font-family: inherit;
-      border: 2px solid #111;
-      background: #ffd29a;
-      padding: 10px 18px;
-      font-size: 15px;
-      cursor: pointer;
+      border:2px solid #111;
+      background:#ffd29a;
+      padding:10px 18px;
+      font-size:15px;
+      cursor:pointer;
     }
+    button:hover { background:#ffbd6a; }
 
-    button:hover {
-      background: #ffbd6a;
-    }
+    #reader { display:none;margin-top:14px; }
 
-    /* RETRO RADIO STYLE */
     .radio-group {
-      text-align: left;
-      margin: 16px 0 0;
-      font-size: 14px;
+      text-align:left;margin-top:16px;font-size:14px;
     }
-
     .radio-group label {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-      cursor: pointer;
+      display:flex;align-items:center;margin-bottom:8px;
     }
-
-    .radio-group input[type="radio"] {
-      appearance: none;
-      width: 14px;
-      height: 14px;
-      border: 2px solid #111;
-      border-radius: 50%;
-      margin-right: 8px;
-      position: relative;
+    .radio-group input {
+      appearance:none;width:14px;height:14px;
+      border:2px solid #111;border-radius:50%;
+      margin-right:8px;position:relative;
     }
-
-    .radio-group input[type="radio"]:checked::after {
-      content: "";
-      width: 6px;
-      height: 6px;
-      background: #111;
-      border-radius: 50%;
-      position: absolute;
-      top: 2px;
-      left: 2px;
+    .radio-group input:checked::after {
+      content:"";width:6px;height:6px;
+      background:#111;border-radius:50%;
+      position:absolute;top:2px;left:2px;
     }
 
     .status {
-      margin-top: 14px;
-      padding: 18px;
-      border: 2px solid #111;
-      background: #fff2e2;
+      margin-top:14px;
+      padding:18px;
+      border:2px solid #111;
     }
-
-    .success {
-      background: #eaffea;
-    }
-
-    .error {
-      background: #ffeaea;
-    }
-
-    .icon {
-      font-size: 36px;
-      margin-bottom: 8px;
-    }
-
+    .success { background:#eaffea; }
+    .error { background:#ffeaea; }
+    .icon { font-size:36px;margin-bottom:6px; }
     .code {
-      font-family: ui-monospace, SFMono-Regular;
-      font-size: 13px;
-      margin-top: 6px;
-      color: #444;
-      word-break: break-all;
+      font-family:ui-monospace,SFMono-Regular;
+      font-size:13px;color:#444;word-break:break-all;
     }
   </style>
 </head>
@@ -150,14 +92,11 @@
 
 <div class="window">
   <div class="titlebar">
-    <div class="title">QR skeniranje</div>
-    <div class="buttons">
-      <span></span><span></span><span></span>
-    </div>
+    <div>QR skeniranje</div>
+    <div class="buttons"><span></span><span></span><span></span></div>
   </div>
 
   <div class="content">
-
     <h1>MAGAteambuilding kuponi</h1>
 
     <button id="startBtn">Začni</button>
@@ -175,93 +114,70 @@
 
     <div id="reader"></div>
     <div id="result"></div>
-
   </div>
 </div>
 
 <script>
   const SUPABASE_URL = "https://hgqsqdwlqfkqkdiznalx.supabase.co";
-  const SUPABASE_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncXNxZHdscWZrcWtkaXpuYWx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3ODMxMzAsImV4cCI6MjA5NDM1OTEzMH0.O3vCCDnN51IUR4P2zKhwg9-IFFGpVPfNuBLT8V-4K_Q";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....";
 
   const qr = new Html5Qrcode("reader");
-  const reader = document.getElementById("reader");
   const startBtn = document.getElementById("startBtn");
+  const reader = document.getElementById("reader");
   const resultEl = document.getElementById("result");
-
-  function autoContinueEnabled() {
-    return document.querySelector('input[name="auto"]:checked').value === "on";
-  }
 
   let locked = false;
 
-  function showResult(type, text, code) {
+  const autoContinue = () =>
+    document.querySelector('input[name="auto"]:checked').value === "on";
+
+  function show(type, text, code) {
     resultEl.innerHTML = `
       <div class="status ${type}">
-        <div class="icon">${type === "success" ? "😊" : "❗"}</div>
+        <div class="icon">${type==="success"?"😊":"❗"}</div>
         <div>${text}</div>
         <div class="code">${code}</div>
-        ${autoContinueEnabled() ? "" : `
-          <div style="margin-top:12px">
-            <button onclick="restart()">Ponovno skeniraj</button>
-          </div>
-        `}
-      </div>
-    `;
+        ${autoContinue() ? "" : `<button onclick="restart()" style="margin-top:12px">Ponovno</button>`}
+      </div>`;
   }
 
   async function restart() {
     resultEl.innerHTML = "";
     locked = false;
-    await qr.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: 250 },
-      onScan
-    );
+    try {
+      await qr.start({ facingMode:"environment" }, { fps:10, qrbox:250 }, onScan);
+    } catch {}
   }
 
   async function onScan(code) {
     if (locked) return;
     locked = true;
-
-    await qr.stop();
+    try { await qr.stop(); } catch {}
 
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/qr_codes`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-          Prefer: "return=minimal"
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/qr_codes`, {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          apikey:SUPABASE_KEY,
+          Authorization:`Bearer ${SUPABASE_KEY}`,
+          Prefer:"return=minimal"
         },
-        body: JSON.stringify({ code })
+        body:JSON.stringify({ code })
       });
 
-      if (res.ok) {
-        showResult("success", "Kupon uspešno potrjen", code);
-      } else {
-        let err = {};
-        try { err = await res.json(); } catch {}
-        if (err.code === "23505") {
-          showResult("error", "Kupon je že bil uporabljen", code);
-        } else {
-          showResult("error", "Prišlo je do napake", code);
-        }
-      }
-
+      if (r.ok) show("success","Kupon uspešno potrjen",code);
+      else show("error","Kupon je že bil uporabljen",code);
     } catch {
-      showResult("error", "Napaka sistema", code);
+      show("error","Napaka sistema",code);
     }
 
-    if (autoContinueEnabled()) {
-      setTimeout(restart, 1800);
-    }
+    if (autoContinue()) setTimeout(restart,1800);
   }
 
   startBtn.onclick = async () => {
-    startBtn.style.display = "none";
-    reader.style.display = "block";
+    startBtn.style.display="none";
+    reader.style.display="block";
     await restart();
   };
 </script>
