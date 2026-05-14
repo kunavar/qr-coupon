@@ -3,18 +3,15 @@
 <head>
   <meta charset="UTF-8">
 
-  <!-- FORCE NO CACHE (GitHub Pages + Safari) -->
+  <!-- NO CACHE (GitHub Pages + Safari fix) -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <title>QR skeniranje</title>
+  <title>MAGAteambuilding kuponi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- QR library -->
-  <script src="https://unpkg.com/html5-qrcode"></script>
-
-  <!-- build: 2026-05-15 -->
+  https://unpkg.com/html5-qrcode/script.js
 
   <style>
     body {
@@ -61,6 +58,11 @@
       text-align: center;
     }
 
+    h1 {
+      font-size: 18px;
+      margin: 0 0 16px;
+    }
+
     #reader {
       display: none;
       margin-top: 14px;
@@ -79,9 +81,39 @@
       background: #ffbd6a;
     }
 
-    .toggle {
-      margin-top: 14px;
+    /* RETRO RADIO STYLE */
+    .radio-group {
+      text-align: left;
+      margin: 16px 0 0;
       font-size: 14px;
+    }
+
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .radio-group input[type="radio"] {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #111;
+      border-radius: 50%;
+      margin-right: 8px;
+      position: relative;
+    }
+
+    .radio-group input[type="radio"]:checked::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: #111;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
     }
 
     .status {
@@ -126,13 +158,19 @@
 
   <div class="content">
 
-    <p>Usmeri kamero proti QR kodi</p>
+    <h1>MAGAteambuilding kuponi</h1>
 
     <button id="startBtn">Začni</button>
 
-    <div class="toggle">
-      <input type="checkbox" id="autoContinue">
-      <label for="autoContinue">Samodejno nadaljuj</label>
+    <div class="radio-group">
+      <label>
+        <input type="radio" name="auto" value="off" checked>
+        Ročno nadaljevanje
+      </label>
+      <label>
+        <input type="radio" name="auto" value="on">
+        Samodejno nadaljuj
+      </label>
     </div>
 
     <div id="reader"></div>
@@ -143,13 +181,17 @@
 
 <script>
   const SUPABASE_URL = "https://hgqsqdwlqfkqkdiznalx.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncXNxZHdscWZrcWtkaXpuYWx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3ODMxMzAsImV4cCI6MjA5NDM1OTEzMH0.O3vCCDnN51IUR4P2zKhwg9-IFFGpVPfNuBLT8V-4K_Q";
+  const SUPABASE_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncXNxZHdscWZrcWtkaXpuYWx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3ODMxMzAsImV4cCI6MjA5NDM1OTEzMH0.O3vCCDnN51IUR4P2zKhwg9-IFFGpVPfNuBLT8V-4K_Q";
 
   const qr = new Html5Qrcode("reader");
   const reader = document.getElementById("reader");
   const startBtn = document.getElementById("startBtn");
   const resultEl = document.getElementById("result");
-  const autoEl = document.getElementById("autoContinue");
+
+  function autoContinueEnabled() {
+    return document.querySelector('input[name="auto"]:checked').value === "on";
+  }
 
   let locked = false;
 
@@ -159,7 +201,7 @@
         <div class="icon">${type === "success" ? "😊" : "❗"}</div>
         <div>${text}</div>
         <div class="code">${code}</div>
-        ${autoEl.checked ? "" : `
+        ${autoContinueEnabled() ? "" : `
           <div style="margin-top:12px">
             <button onclick="restart()">Ponovno skeniraj</button>
           </div>
@@ -197,12 +239,12 @@
       });
 
       if (res.ok) {
-        showResult("success", "Koda uspešno zabeležena", code);
+        showResult("success", "Kupon uspešno potrjen", code);
       } else {
         let err = {};
         try { err = await res.json(); } catch {}
         if (err.code === "23505") {
-          showResult("error", "Koda je že koriščena", code);
+          showResult("error", "Kupon je že bil uporabljen", code);
         } else {
           showResult("error", "Prišlo je do napake", code);
         }
@@ -212,7 +254,7 @@
       showResult("error", "Napaka sistema", code);
     }
 
-    if (autoEl.checked) {
+    if (autoContinueEnabled()) {
       setTimeout(restart, 1800);
     }
   }
