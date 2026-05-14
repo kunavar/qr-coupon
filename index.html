@@ -2,23 +2,32 @@
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
-  <title>QR skener</title>
+  <title>QR skeniranje</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <script src="https://unpkg.com/html5-qrcode"></script>
 
   <style>
     body {
-      font-family: system-ui, -apple-system;
-      background: #f8f9fb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      background: #f5f7fa;
       margin: 0;
       padding: 24px;
+      color: #111827;
       text-align: center;
-      color: #111;
     }
 
-    h2 { font-weight: 600; }
-    .subtitle { color: #666; font-size: 14px; margin-bottom: 24px; }
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
 
     #reader {
       width: 100%;
@@ -27,13 +36,13 @@
       display: none;
     }
 
-    .controls {
-      margin: 16px 0;
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      font-size: 14px;
-      color: #444;
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 360px;
+      margin: 24px auto;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
     }
 
     button {
@@ -41,41 +50,74 @@
       border-radius: 12px;
       padding: 14px 20px;
       font-size: 16px;
-      background: #111;
-      color: #fff;
+      font-weight: 500;
+      cursor: pointer;
     }
 
-    button.secondary {
+    .primary {
+      background: #111827;
+      color: white;
+    }
+
+    .secondary {
       background: #e5e7eb;
-      color: #111;
+      color: #111827;
     }
 
-    #result { margin-top: 24px; display: none; }
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #374151;
+      margin-top: 16px;
+    }
 
-    .status {
+    .status-card {
+      border-radius: 16px;
       padding: 32px 16px;
-      border-radius: 20px;
-      max-width: 360px;
-      margin: 0 auto;
     }
 
-    .success { background: #ecfdf5; color: #065f46; }
-    .error { background: #fef2f2; color: #7f1d1d; }
+    .success {
+      background: #ecfdf3;
+      color: #065f46;
+    }
 
-    .icon { font-size: 48px; }
-    .message { font-size: 18px; font-weight: 600; }
+    .error {
+      background: #fef2f2;
+      color: #7f1d1d;
+    }
+
+    .icon {
+      font-size: 44px;
+      margin-bottom: 12px;
+    }
+
+    .message {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .code {
+      margin-top: 8px;
+      font-size: 13px;
+      font-family: ui-monospace, SFMono-Regular;
+      color: #6b7280;
+      word-break: break-all;
+    }
   </style>
 </head>
 
 <body>
 
-<h2>QR skeniranje</h2>
+<h1>QR skeniranje</h1>
 <div class="subtitle">Usmeri kamero proti QR kodi</div>
 
-<button id="startBtn">Začni skeniranje</button>
+<button id="startBtn" class="primary">Začni skeniranje</button>
 
 <div class="controls">
-  <input type="checkbox" id="autoContinue" checked>
+  <input type="checkbox" id="autoContinue">
   <label for="autoContinue">Samodejno nadaljuj</label>
 </div>
 
@@ -84,43 +126,48 @@
 
 <script>
   const SUPABASE_URL = "https://hgqsqdwlqfkqkdiznalx.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhncXNxZHdscWZrcWtkaXpuYWx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3ODMxMzAsImV4cCI6MjA5NDM1OTEzMH0.O3vCCDnN51IUR4P2zKhwg9-IFFGpVPfNuBLT8V-4K_Q";
+  const SUPABASE_KEY = "TVOJ_PRAVI_ANON_KEY";
 
   const qr = new Html5Qrcode("reader");
-  const startBtn = document.getElementById("startBtn");
   const readerDiv = document.getElementById("reader");
+  const startBtn = document.getElementById("startBtn");
   const resultEl = document.getElementById("result");
   const autoContinueEl = document.getElementById("autoContinue");
 
   let locked = false;
 
   function showResult(type, text, code) {
-    resultEl.style.display = "block";
     resultEl.innerHTML = `
-      <div class="status ${type}">
+      <div class="card status-card ${type}">
         <div class="icon">${type === "success" ? "✅" : "❌"}</div>
         <div class="message">${text}</div>
-        <div style="margin-top:8px; font-size:14px; color:#555;">
-          ${code}
-        </div>
+        <div class="code">${code}</div>
         ${autoContinueEl.checked ? "" : `
-          <button class="secondary" onclick="restartScan()" style="margin-top:16px;">
-            Ponovno skeniraj
-          </button>
+          <div style="margin-top:16px">
+            <button class="secondary" onclick="restartScan()">
+              Ponovno skeniraj
+            </button>
+          </div>
         `}
       </div>
     `;
   }
 
   async function restartScan() {
-    resultEl.style.display = "none";
+    resultEl.innerHTML = "";
     locked = false;
-    await qr.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, onScan);
+    await qr.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      onScan
+    );
   }
 
   async function onScan(code) {
     if (locked) return;
     locked = true;
+
+    await qr.stop();
 
     try {
       const res = await fetch(`${SUPABASE_URL}/rest/v1/qr_codes`, {
@@ -134,29 +181,31 @@
         body: JSON.stringify({ code })
       });
 
-      await qr.stop();
-
-      if (res.ok) showResult("success", "Koda uspešno zabeležena", code);
-      else {
-        const err = await res.json();
-        if (err.code === "23505")
+      if (res.ok) {
+        showResult("success", "Koda uspešno zabeležena", code);
+      } else {
+        let err = {};
+        try { err = await res.json(); } catch {}
+        if (err.code === "23505") {
           showResult("error", "Koda je že koriščena", code);
-        else
+        } else {
           showResult("error", "Prišlo je do napake", code);
+        }
       }
 
     } catch {
       showResult("error", "Napaka pri komunikaciji", code);
     }
 
-    if (autoContinueEl.checked)
+    if (autoContinueEl.checked) {
       setTimeout(restartScan, 2000);
+    }
   }
 
   startBtn.onclick = async () => {
     startBtn.style.display = "none";
     readerDiv.style.display = "block";
-    await qr.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, onScan);
+    await restartScan();
   };
 </script>
 
