@@ -2,13 +2,12 @@
 <html lang="sl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- NO CACHE, EVER -->
+  <!-- ABSOLUTNO BREZ CACHE -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Loading…</title>
 
@@ -22,7 +21,7 @@
 
     .window {
       max-width:360px;
-      margin:60px auto;
+      margin:80px auto;
       background:#fde5c9;
       border:2px solid #111;
     }
@@ -33,43 +32,28 @@
       border-bottom:2px solid #111;
       display:flex;
       justify-content:space-between;
-      align-items:center;
-      font-size:14px;
       font-weight:600;
     }
 
     .buttons span {
-      display:inline-block;
-      width:12px;
-      height:12px;
-      border:1px solid #111;
-      border-radius:50%;
+      width:12px;height:12px;border:1px solid #111;
+      border-radius:50%;display:inline-block;margin-left:4px;
       background:#fde5c9;
-      margin-left:4px;
     }
 
-    .content {
-      padding:20px;
-    }
+    .content { padding:20px; }
 
     .progress {
       border:2px solid #111;
       height:18px;
       margin-top:12px;
-      display:flex;
+      overflow:hidden;
     }
 
     .bar {
       background:#cbb6f0;
+      height:100%;
       width:0%;
-      transition:width 0.3s linear;
-    }
-
-    .icons {
-      display:flex;
-      gap:18px;
-      margin-bottom:12px;
-      font-size:24px;
     }
   </style>
 </head>
@@ -79,18 +63,10 @@
 <div class="window">
   <div class="titlebar">
     <div>System</div>
-    <div class="buttons">
-      <span></span><span></span><span></span>
-    </div>
+    <div class="buttons"><span></span><span></span><span></span></div>
   </div>
-
   <div class="content">
-    <div class="icons">
-      🌍 📄 📁
-    </div>
-
-    <div>Loading...</div>
-
+    <div>Loading…</div>
     <div class="progress">
       <div class="bar" id="bar"></div>
     </div>
@@ -99,13 +75,13 @@
 
 <script>
   const bar = document.getElementById("bar");
-  let progress = 0;
+  let p = 0;
 
   const timer = setInterval(() => {
-    progress += 20;
-    bar.style.width = progress + "%";
+    p += 25;
+    bar.style.width = p + "%";
 
-    if (progress >= 100) {
+    if (p >= 100) {
       clearInterval(timer);
       location.replace("app.html?v=" + Date.now());
     }
